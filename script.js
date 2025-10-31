@@ -8,8 +8,10 @@ const appState = {
 // DOM Elements
 const elements = {
   listView: document.getElementById("listView"),
+  gridView: document.getElementById("gridView"),
   detailView: document.getElementById("detailView"),
   strainList: document.getElementById("strainList"),
+  strainGrid: document.getElementById("strainGrid"),
   searchInput: document.getElementById("searchInput"),
   modalOverlay: document.getElementById("modalOverlay"),
   strainForm: document.getElementById("strainForm"),
@@ -36,6 +38,7 @@ const elements = {
 async function init() {
   await loadStrains();
   renderList();
+  renderGrid();
   attachEventListeners();
 }
 
@@ -116,6 +119,54 @@ function createStrainListItem(strain) {
   return li;
 }
 
+// Render Grid View
+function renderGrid(filteredStrains = null) {
+  const strains = filteredStrains !== null ? filteredStrains : appState.strains;
+
+  elements.strainGrid.innerHTML = "";
+
+  if (strains.length === 0) {
+    elements.strainGrid.innerHTML = `
+      <div class="empty-state">
+        <h3>No strains found</h3>
+        <p>Add your first strain to get started!</p>
+      </div>
+    `;
+    return;
+  }
+
+  strains.forEach((strain) => {
+    const item = createGridItem(strain);
+    elements.strainGrid.appendChild(item);
+  });
+}
+
+// Create Grid Item
+function createGridItem(strain) {
+  const div = document.createElement("div");
+  div.className = "grid-item";
+  div.dataset.id = strain.id;
+
+  const badgeClass = getBadgeClass(strain.type);
+  const imageHTML = strain.image
+    ? `<img src="${strain.image}" alt="${escapeHtml(
+        strain.name
+      )}" class="grid-item-image" />`
+    : '<div class="grid-item-image" style="background: var(--gray-light)"></div>';
+
+  div.innerHTML = `
+    ${imageHTML}
+    <div class="grid-item-content">
+      <div class="grid-item-name">${escapeHtml(strain.name)}</div>
+      <span class="grid-item-badge ${badgeClass}">${strain.type}</span>
+    </div>
+  `;
+
+  div.addEventListener("click", () => showDetail(strain.id));
+
+  return div;
+}
+
 // Get Badge Class
 function getBadgeClass(type) {
   switch (type.toLowerCase()) {
@@ -158,6 +209,7 @@ function showDetail(strainId) {
 
   // Switch views with animation
   elements.listView.classList.add("hidden");
+  elements.gridView.classList.add("hidden");
   elements.detailView.classList.remove("hidden");
 }
 
@@ -240,6 +292,7 @@ function addStrain(strainData) {
   appState.strains.unshift(newStrain); // Add to beginning
   saveToLocalStorage();
   renderList();
+  renderGrid();
 }
 
 // Edit Strain
@@ -254,6 +307,7 @@ function editStrain(id, strainData) {
 
   saveToLocalStorage();
   renderList();
+  renderGrid();
 
   // Update detail view if we're viewing this strain
   if (appState.currentStrain && appState.currentStrain.id === id) {
@@ -266,13 +320,37 @@ function deleteStrain(id) {
   appState.strains = appState.strains.filter((s) => s.id !== id);
   saveToLocalStorage();
   renderList();
+  renderGrid();
   goToListView();
 }
 
-// Go to List View
-function goToListView() {
+// Switch View
+function switchView(viewName) {
+  // Hide all views
+  elements.listView.classList.add("hidden");
+  elements.gridView.classList.add("hidden");
   elements.detailView.classList.add("hidden");
-  elements.listView.classList.remove("hidden");
+
+  // Show selected view
+  if (viewName === "list") {
+    elements.listView.classList.remove("hidden");
+  } else if (viewName === "grid") {
+    elements.gridView.classList.remove("hidden");
+  }
+
+  // Update active nav button
+  elements.navBtns.forEach((btn) => {
+    if (btn.dataset.view === viewName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+}
+
+// Go to List View (legacy, now redirects to switchView)
+function goToListView() {
+  switchView("list");
   appState.currentStrain = null;
 }
 
@@ -282,6 +360,7 @@ function handleSearch(e) {
 
   if (query === "") {
     renderList();
+    renderGrid();
     return;
   }
 
@@ -295,6 +374,7 @@ function handleSearch(e) {
   });
 
   renderList(filtered);
+  renderGrid(filtered);
 }
 
 // Escape HTML
@@ -328,8 +408,10 @@ function attachEventListeners() {
   // Navigation buttons
   elements.navBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      goToListView();
-      // You can add more navigation logic here for different views
+      const viewName = btn.dataset.view;
+      if (viewName && viewName !== "detail") {
+        switchView(viewName);
+      }
     });
   });
 
