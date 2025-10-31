@@ -23,6 +23,9 @@
   --olive-gradient: linear-gradient(135deg, #6b8e23 0%, #8aa63e 100%);
   --olive-gradient-dark: linear-gradient(135deg, #556b2f 0%, #6b8e23 100%);
   --background-gradient: linear-gradient(180deg, #f9fafb 0%, #f1f3f5 100%);
+  --sativa-gradient: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+  --indica-gradient: linear-gradient(135deg, #ba68c8 0%, #ab47bc 100%);
+  --hybrid-gradient: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -50,6 +53,17 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, sans-serif;
   background: var(--background-gradient);
+  background-image: radial-gradient(
+      circle at 20% 50%,
+      rgba(107, 142, 35, 0.03) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(107, 142, 35, 0.03) 0%,
+      transparent 50%
+    );
+  background-attachment: fixed;
   color: var(--black);
   line-height: 1.6;
   padding-bottom: 80px; /* Space for bottom nav */
@@ -172,6 +186,7 @@ body {
 .view {
   padding: var(--spacing-md);
   animation: fadeIn 0.3s ease-in-out;
+  position: relative;
 }
 
 @keyframes fadeIn {
@@ -309,7 +324,7 @@ body {
 
 .grid-item-image {
   width: 100%;
-  height: 70%;
+  height: 65%;
   object-fit: cover;
   background-color: var(--gray-light);
   transition: transform 0.5s ease;
@@ -321,23 +336,25 @@ body {
 
 .grid-item-content {
   padding: var(--spacing-sm);
-  height: 30%;
+  padding-bottom: 10px;
+  height: 35%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 4px;
   position: relative;
   z-index: 1;
   background: var(--white);
 }
 
 .grid-item-name {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--black);
-  margin-bottom: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .strain-badge {
@@ -354,33 +371,39 @@ body {
 }
 
 .badge-sativa {
-  background: linear-gradient(
-    135deg,
-    rgba(76, 175, 80, 0.2) 0%,
-    rgba(76, 175, 80, 0.1) 100%
-  );
-  color: var(--sativa-green);
-  border: 1px solid rgba(76, 175, 80, 0.3);
+  background: var(--sativa-gradient);
+  color: var(--white);
+  border: none;
+  box-shadow: 0 2px 4px rgba(102, 187, 106, 0.3);
+}
+
+.badge-sativa:hover {
+  box-shadow: 0 4px 8px rgba(102, 187, 106, 0.4);
+  transform: translateY(-2px);
 }
 
 .badge-indica {
-  background: linear-gradient(
-    135deg,
-    rgba(156, 39, 176, 0.2) 0%,
-    rgba(156, 39, 176, 0.1) 100%
-  );
-  color: var(--indica-purple);
-  border: 1px solid rgba(156, 39, 176, 0.3);
+  background: var(--indica-gradient);
+  color: var(--white);
+  border: none;
+  box-shadow: 0 2px 4px rgba(186, 104, 200, 0.3);
+}
+
+.badge-indica:hover {
+  box-shadow: 0 4px 8px rgba(186, 104, 200, 0.4);
+  transform: translateY(-2px);
 }
 
 .badge-hybrid {
-  background: linear-gradient(
-    135deg,
-    rgba(33, 150, 243, 0.2) 0%,
-    rgba(33, 150, 243, 0.1) 100%
-  );
-  color: var(--hybrid-blue);
-  border: 1px solid rgba(33, 150, 243, 0.3);
+  background: var(--hybrid-gradient);
+  color: var(--white);
+  border: none;
+  box-shadow: 0 2px 4px rgba(66, 165, 245, 0.3);
+}
+
+.badge-hybrid:hover {
+  box-shadow: 0 4px 8px rgba(66, 165, 245, 0.4);
+  transform: translateY(-2px);
 }
 
 .grid-item-badge {
@@ -393,38 +416,11 @@ body {
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   display: inline-block;
+  margin: 0;
+  margin-top: auto;
 }
 
-/* Apply gradient backgrounds to grid badges too */
-.grid-item .badge-sativa {
-  background: linear-gradient(
-    135deg,
-    rgba(76, 175, 80, 0.2) 0%,
-    rgba(76, 175, 80, 0.1) 100%
-  );
-  color: var(--sativa-green);
-  border: 1px solid rgba(76, 175, 80, 0.3);
-}
-
-.grid-item .badge-indica {
-  background: linear-gradient(
-    135deg,
-    rgba(156, 39, 176, 0.2) 0%,
-    rgba(156, 39, 176, 0.1) 100%
-  );
-  color: var(--indica-purple);
-  border: 1px solid rgba(156, 39, 176, 0.3);
-}
-
-.grid-item .badge-hybrid {
-  background: linear-gradient(
-    135deg,
-    rgba(33, 150, 243, 0.2) 0%,
-    rgba(33, 150, 243, 0.1) 100%
-  );
-  color: var(--hybrid-blue);
-  border: 1px solid rgba(33, 150, 243, 0.3);
-}
+/* Grid badges inherit from main badge styles above */
 
 .strain-name {
   font-size: 1.1rem;
@@ -863,6 +859,13 @@ body {
   text-align: center;
   padding: var(--spacing-xl) var(--spacing-md);
   color: var(--gray-dark);
+  background: linear-gradient(
+    135deg,
+    rgba(107, 142, 35, 0.05) 0%,
+    transparent 100%
+  );
+  border-radius: var(--radius-lg);
+  border: 1px dashed rgba(107, 142, 35, 0.2);
 }
 
 .empty-state h3 {
