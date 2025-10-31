@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Devil's Toast",
+    "type": "Sativa",
+    "source": "SeaWeed Portland (SWP)",
+    "setting": "Bought it with Chris and Lynne and smoked at Leah's",
+    "format": "Pre-Roll",
+    "stoner": "Chris & Leah",
+    "impressions": "Fun, very funny not too totally out of it or paranoid",
+    "other": "I just heard my wife say she'd be thinking of Dick all day.",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSg70XXlX1cIJXe7KU60kwYOjpVGq0RmOr7_w&s"
+  },
+  {
+    "id": 2,
+    "name": "Blueberry",
+    "type": "Indica",
+    "source": "SWP",
+    "setting": "Quiet evening at home",
+    "format": "Flower",
+    "stoner": "Me",
+    "impressions": "Relaxing, great for winding down",
+    "other": "Classic strain, never disappoints",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC9gGsWepPynKstoYPxbRi4aC2-iWMZsfcfg&s"
+  },
+  {
+    "id": 3,
+    "name": "Thai x ECSD",
+    "type": "Sativa",
+    "source": "Paul's Boutique Windham",
+    "setting": "Music session with friends",
+    "format": "Flower",
+    "stoner": "The crew",
+    "impressions": "Energetic and creative, perfect for jamming",
+    "other": "Great conversation starter",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdg9b_YaucxLDylFHoFuk6gneDNB-1u2X7Cw&sp"
+  },
+  {
+    "id": 4,
+    "name": "Good one",
+    "type": "Hybrid",
+    "source": "Jar",
+    "setting": "Casual hangout",
+    "format": "Flower",
+    "stoner": "Us",
+    "impressions": "Balanced, nice middle ground",
+    "other": "Unclear origins but decent quality",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_oa0Pipe_wN_R13aFxa1Zv9WOmn-sSePhLw&s"
+  },
+  {
+    "id": 5,
+    "name": "Wild Blueberry",
+    "type": "Indica",
+    "source": "Sea Weed",
+    "setting": "Movie night",
+    "format": "Flower",
+    "stoner": "Me & friend",
+    "impressions": "Super relaxing, couch lock vibes",
+    "other": "Great for watching films",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiTR_0r6yzCkvAYJoAOsqyX2wSOejgeayMVw&s"
+  },
+  {
+    "id": 6,
+    "name": "92 Demons",
+    "type": "Sativa",
+    "source": "Purple Co",
+    "setting": "Morning wake and bake",
+    "format": "Pre-Roll",
+    "stoner": "Me",
+    "impressions": "Energizing, great daytime strain",
+    "other": "Helps with focus and creativity",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZIgPN2C273Voy2JickODD821IlbTK92UO4g&s"
+  }
+]
