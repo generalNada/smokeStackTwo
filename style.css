@@ -518,14 +518,12 @@ body {
 }
 
 .detail-card {
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.95);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-xl);
   animation: slideUp 0.3s ease-out;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 @keyframes slideUp {
@@ -595,6 +593,11 @@ body {
   box-shadow: var(--shadow-xl);
   border: 2px solid rgba(0, 0, 0, 0.05);
   animation: zoomIn 0.4s ease-out;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 @keyframes zoomIn {
