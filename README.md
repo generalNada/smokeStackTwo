@@ -5,13 +5,13 @@ A personal cannabis strain tracker built with pure HTML, CSS, and JavaScript - n
 ## Features
 
 ✨ **Mobile-First Design** - Optimized for phones and smaller screens  
-🎨 **Custom Styling** - Beautiful UI with soft rounded cards and custom icons  
+🎨 **Premium Styling** - Gradients, hover effects, micro-interactions, and layered shadows  
 🏷️ **Strain Badges** - Color-coded badges for Sativa (green), Indica (purple), and Hybrid (blue)  
-🖼️ **Image Support** - Display strain photos in list and detail views  
+🖼️ **Image Support** - Display strain photos in list and detail views with grid view option  
 🔍 **Live Search** - Filter strains by name, type, source, or setting  
 💾 **LocalStorage** - All data saved locally in your browser  
 📱 **Offline Ready** - Works without internet connection  
-🎬 **Smooth Animations** - Animated transitions when opening/closing entries
+🎬 **Smooth Animations** - Staggered animations, hover effects, and transitions
 
 ## Getting Started
 
