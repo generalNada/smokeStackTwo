@@ -41,7 +41,7 @@ localStorage.removeItem("smokestack_strains");
 6. Right-click → **Delete Item**
 7. Refresh the page
 
-**Safari:**
+**Safari (Mac):**
 
 1. Enable Developer Tools: Safari → Preferences → Advanced → "Show Develop menu"
 2. Press `Cmd+Option+I` to open DevTools
@@ -50,6 +50,22 @@ localStorage.removeItem("smokestack_strains");
 5. Click on your domain
 6. Find and delete `smokestack_strains`
 7. Refresh the page
+
+**iOS Safari (iPhone/iPad):**
+
+1. On your iOS device, open Safari and go to your app
+2. Connect your device to a Mac via USB (for Safari Desktop)
+3. On your Mac: Safari → Develop → [Your Device Name] → [Your App URL]
+4. Mac DevTools opens - Go to **Storage** tab
+5. Expand **Local Storage** → Your domain
+6. Find and delete `smokestack_strains`
+7. Refresh on your iOS device
+
+**OR - Easier iOS Method (Without Mac):**
+
+1. Add a temporary reset button (see below)
+2. Tap the button to clear LocalStorage
+3. Refresh the page
 
 ## Understanding the Data Flow
 

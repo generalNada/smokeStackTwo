@@ -14,19 +14,41 @@
     <!-- Header -->
     <header class="header">
       <h1 class="app-title">SmokeStack</h1>
-      <button class="btn-add" id="btnAdd" aria-label="Add new strain">
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
+      <div style="display: flex; gap: 8px">
+        <!-- Debug button (hidden by default, unhide temporarily for iOS reset) -->
+        <button
+          class="btn-add"
+          id="btnReset"
+          aria-label="Reset to JSON data"
+          onclick="if(confirm('Reset to JSON data? This will clear LocalStorage.')) { localStorage.removeItem('smokestack_strains'); location.reload(); }"
         >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+          </svg>
+        </button>
+        <button class="btn-add" id="btnAdd" aria-label="Add new strain">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+      </div>
     </header>
 
     <!-- Search Bar -->
