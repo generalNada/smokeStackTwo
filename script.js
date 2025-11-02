@@ -287,7 +287,9 @@ async function handleFormSubmit(e) {
     name: formData.get("name"),
     type: formData.get("type"),
     source: formData.get("source"),
-    image: formData.get("image"),
+    image:
+      formData.get("image") ||
+      "https://res.cloudinary.com/dqjhgnivi/image/upload/v1752803556/nub5c65r4a2x4ktdakdc.jpg",
     setting: formData.get("setting"),
     format: formData.get("format"),
     stoner: formData.get("stoner"),
