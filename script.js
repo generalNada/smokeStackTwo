@@ -43,15 +43,34 @@ async function init() {
 }
 
 // Load Strains from JSON or LocalStorage
+// async function loadStrains() {
+//   try {
+//     // Try to load from localStorage first
+//     const saved = localStorage.getItem("smokestack_strains");
+//     if (saved) {
+//       appState.strains = JSON.parse(saved);
+//     } else {
+//       // Load from JSON file
+//       const response = await fetch("strains.json");
+//       const data = await response.json();
+//       appState.strains = data;
+//       saveToLocalStorage();
+//     }
+//   } catch (error) {
+//     console.error("Error loading strains:", error);
+//     appState.strains = [];
+//   }
+// }
+
+// Load Strains from API or LocalStorage
 async function loadStrains() {
   try {
-    // Try to load from localStorage first
     const saved = localStorage.getItem("smokestack_strains");
     if (saved) {
       appState.strains = JSON.parse(saved);
     } else {
-      // Load from JSON file
-      const response = await fetch("strains.json");
+      // Load from remote API
+      const response = await fetch("https://franky-app-ix96j.ondigitalocean.app/api/strains");
       const data = await response.json();
       appState.strains = data;
       saveToLocalStorage();
@@ -61,6 +80,8 @@ async function loadStrains() {
     appState.strains = [];
   }
 }
+
+
 
 // Save to LocalStorage
 function saveToLocalStorage() {
