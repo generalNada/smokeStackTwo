@@ -42,46 +42,49 @@ async function init() {
   attachEventListeners();
 }
 
-// Load Strains from JSON or LocalStorage
-// async function loadStrains() {
-//   try {
-//     // Try to load from localStorage first
-//     const saved = localStorage.getItem("smokestack_strains");
-//     if (saved) {
-//       appState.strains = JSON.parse(saved);
-//     } else {
-//       // Load from JSON file
-//       const response = await fetch("strains.json");
-//       const data = await response.json();
-//       appState.strains = data;
-//       saveToLocalStorage();
-//     }
-//   } catch (error) {
-//     console.error("Error loading strains:", error);
-//     appState.strains = [];
-//   }
-// }
+// API Configuration
+const API_BASE = "https://franky-app-ix96j.ondigitalocean.app/api";
 
-// Load Strains from API or LocalStorage
+// Helper to convert API _id to app id
+function normalizeStrain(strain) {
+  return {
+    ...strain,
+    id: strain._id || strain.id,
+  };
+}
+
+// Load Strains from API with fallback to LocalStorage
 async function loadStrains() {
   try {
-    const saved = localStorage.getItem("smokestack_strains");
-    if (saved) {
-      appState.strains = JSON.parse(saved);
-    } else {
-      // Load from remote API
-      const response = await fetch("https://franky-app-ix96j.ondigitalocean.app/api/strains");
+    // Try API first
+    const response = await fetch(`${API_BASE}/strains`);
+    if (response.ok) {
+      const data = await response.json();
+      appState.strains = data.map(normalizeStrain);
+      saveToLocalStorage(); // Cache in LocalStorage
+      return;
+    }
+  } catch (error) {
+    console.log("API unavailable, using LocalStorage:", error);
+  }
+
+  // Fallback to LocalStorage
+  const saved = localStorage.getItem("smokestack_strains");
+  if (saved) {
+    appState.strains = JSON.parse(saved);
+  } else {
+    // Last resort: load from JSON file
+    try {
+      const response = await fetch("strains.json");
       const data = await response.json();
       appState.strains = data;
       saveToLocalStorage();
+    } catch (error) {
+      console.error("Error loading strains:", error);
+      appState.strains = [];
     }
-  } catch (error) {
-    console.error("Error loading strains:", error);
-    appState.strains = [];
   }
 }
-
-
 
 // Save to LocalStorage
 function saveToLocalStorage() {
@@ -275,7 +278,7 @@ function closeModal() {
 }
 
 // Handle Form Submit
-function handleFormSubmit(e) {
+async function handleFormSubmit(e) {
   e.preventDefault();
 
   const formData = new FormData(e.target);
@@ -294,30 +297,80 @@ function handleFormSubmit(e) {
 
   if (id) {
     // Edit existing strain
-    editStrain(parseInt(id), strainData);
+    await editStrain(parseInt(id), strainData);
   } else {
     // Add new strain
-    addStrain(strainData);
+    await addStrain(strainData);
   }
 
   closeModal();
 }
 
 // Add New Strain
-function addStrain(strainData) {
+async function addStrain(strainData) {
+  try {
+    // Try API first
+    const response = await fetch(`${API_BASE}/strains`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(strainData),
+    });
+
+    if (response.ok) {
+      const newStrain = await response.json();
+      appState.strains.unshift(normalizeStrain(newStrain));
+      saveToLocalStorage(); // Cache
+      renderList();
+      renderGrid();
+      return;
+    }
+  } catch (error) {
+    console.log("API unavailable, saving locally:", error);
+  }
+
+  // Fallback to LocalStorage only
   const newStrain = {
     id: Date.now(),
     ...strainData,
   };
 
-  appState.strains.unshift(newStrain); // Add to beginning
+  appState.strains.unshift(newStrain);
   saveToLocalStorage();
   renderList();
   renderGrid();
 }
 
 // Edit Strain
-function editStrain(id, strainData) {
+async function editStrain(id, strainData) {
+  try {
+    // Try API first
+    const response = await fetch(`${API_BASE}/strains/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(strainData),
+    });
+
+    if (response.ok) {
+      const updatedStrain = await response.json();
+      const index = appState.strains.findIndex((s) => s.id === id);
+      if (index !== -1) {
+        appState.strains[index] = normalizeStrain(updatedStrain);
+        saveToLocalStorage(); // Cache
+        renderList();
+        renderGrid();
+
+        // Update detail view if we're viewing this strain
+        if (appState.currentStrain && appState.currentStrain.id === id) {
+          showDetail(id);
+        }
+      }
+      return;
+    }
+  } catch (error) {
+    console.log("API unavailable, saving locally:", error);
+  }
+
+  // Fallback to LocalStorage only
   const index = appState.strains.findIndex((s) => s.id === id);
   if (index === -1) return;
 
@@ -336,8 +389,27 @@ function editStrain(id, strainData) {
   }
 }
 
-// Delete Strain (optional, can be added later)
-function deleteStrain(id) {
+// Delete Strain
+async function deleteStrain(id) {
+  try {
+    // Try API first
+    const response = await fetch(`${API_BASE}/strains/${id}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      appState.strains = appState.strains.filter((s) => s.id !== id);
+      saveToLocalStorage(); // Cache
+      renderList();
+      renderGrid();
+      goToListView();
+      return;
+    }
+  } catch (error) {
+    console.log("API unavailable, deleting locally:", error);
+  }
+
+  // Fallback to LocalStorage only
   appState.strains = appState.strains.filter((s) => s.id !== id);
   saveToLocalStorage();
   renderList();

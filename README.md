@@ -95,32 +95,24 @@ smokeStackTwo/
 
 ## Data Storage
 
-- **Initial Load**: Data loads from `strains.json` on first visit
-- **After Edits**: All changes are saved to browser LocalStorage
-- **Offline**: Once loaded, the app works completely offline
-- **No Backend**: Everything runs locally in your browser
+- **Primary**: DigitalOcean API - All CRUD operations sync to cloud database
+- **Cache**: LocalStorage - Backup cache for offline access
+- **Fallback**: `strains.json` - Initial seed data if API is empty
+- **Sync**: Real-time sync across devices when connected to API
+- **Offline**: Full offline support with LocalStorage fallback
 
 ### Resetting Your Data
 
-If you want to reset to the original `strains.json` data:
-
-**Quick Method (Console):**
+**Clear Local Cache:**
 
 1. Open DevTools (F12 or Cmd+Option+I)
 2. Go to **Console** tab
 3. Type: `localStorage.removeItem('smokestack_strains')`
-4. Press Enter
-5. Refresh the page
+4. Press Enter, then refresh
 
-**GUI Method:**
+This clears your local cache and reloads from the DigitalOcean API. If the API is empty, it falls back to `strains.json`.
 
-1. Open DevTools (F12 or Cmd+Option+I)
-2. Go to **Application** tab (Chrome) or **Storage** tab (Firefox)
-3. Find **Local Storage** → `http://localhost:8000` (or your domain)
-4. Right-click `smokestack_strains` → Delete
-5. Refresh the page
-
-This will reload data from `strains.json`. See [CLEAR_LOCALSTORAGE.md](CLEAR_LOCALSTORAGE.md) for detailed instructions.
+See [CLEAR_LOCALSTORAGE.md](CLEAR_LOCALSTORAGE.md) for detailed browser-specific instructions.
 
 ## Customization
 
