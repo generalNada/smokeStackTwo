@@ -18,6 +18,7 @@ const elements = {
   modalTitle: document.getElementById("modalTitle"),
   btnAdd: document.getElementById("btnAdd"),
   btnEdit: document.getElementById("btnEdit"),
+  btnDelete: document.getElementById("btnDelete"),
   btnBack: document.getElementById("btnBack"),
   btnClose: document.getElementById("btnClose"),
   btnCancel: document.getElementById("btnCancel"),
@@ -244,6 +245,20 @@ function showAddModal() {
   elements.strainForm.reset();
   document.getElementById("editId").value = "";
   elements.modalOverlay.classList.remove("hidden");
+}
+
+// Handle Delete Click
+function handleDeleteClick() {
+  if (!appState.currentStrain) return;
+
+  const strainName = appState.currentStrain.name;
+  if (
+    confirm(
+      `Are you sure you want to delete "${strainName}"? This cannot be undone.`
+    )
+  ) {
+    deleteStrain(appState.currentStrain.id);
+  }
 }
 
 // Show Edit Modal
@@ -486,6 +501,9 @@ function attachEventListeners() {
 
   // Edit button
   elements.btnEdit.addEventListener("click", showEditModal);
+
+  // Delete button
+  elements.btnDelete.addEventListener("click", handleDeleteClick);
 
   // Back button
   elements.btnBack.addEventListener("click", goToListView);
