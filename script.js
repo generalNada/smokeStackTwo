@@ -299,7 +299,7 @@ async function handleFormSubmit(e) {
 
   if (id) {
     // Edit existing strain
-    await editStrain(parseInt(id), strainData);
+    await editStrain(id, strainData);
   } else {
     // Add new strain
     await addStrain(strainData);
