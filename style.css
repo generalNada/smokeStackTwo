@@ -53,7 +53,13 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, sans-serif;
-  background: linear-gradient(135deg, #14532d 0%, #065f46 100%);
+  background: linear-gradient(
+      135deg,
+      rgba(20, 83, 45, 0.92) 0%,
+      rgba(6, 95, 70, 0.92) 100%
+    ),
+    url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmSn203rmrmQhsJg2CQZqDz_hElk-kW1jDSA&s")
+      center/cover;
   background-attachment: fixed;
   color: var(--black);
   line-height: 1.6;
