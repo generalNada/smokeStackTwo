@@ -41,6 +41,7 @@ async function init() {
   renderList();
   renderGrid();
   attachEventListeners();
+  initThemeToggle();
 }
 
 // API Configuration
@@ -533,6 +534,26 @@ function attachEventListeners() {
     if (e.target === elements.modalOverlay) {
       closeModal();
     }
+  });
+}
+
+// Theme Toggle Function
+function initThemeToggle() {
+  const appTitle = document.querySelector(".app-title");
+
+  // Load saved theme preference
+  const savedTheme = localStorage.getItem("smokestack_theme");
+  if (savedTheme === "light") {
+    document.body.classList.add("light-mode");
+  }
+
+  // Add click event to toggle theme
+  appTitle.addEventListener("click", () => {
+    document.body.classList.toggle("light-mode");
+
+    // Save preference
+    const isLight = document.body.classList.contains("light-mode");
+    localStorage.setItem("smokestack_theme", isLight ? "light" : "dark");
   });
 }
 

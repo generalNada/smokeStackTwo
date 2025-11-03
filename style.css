@@ -48,6 +48,77 @@
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Theme colors - Dark Mode (default) */
+  --bg-gradient-start: rgba(20, 83, 45, 0.92);
+  --bg-gradient-end: rgba(6, 95, 70, 0.92);
+  --header-bg: rgba(20, 71, 40, 0.3);
+  --card-bg: rgba(20, 60, 40, 0.4);
+  --title-color: #043104;
+  --text-primary: #a0d4a0;
+  --text-secondary: #c0e0c0;
+  --border-color: rgba(60, 120, 80, 0.4);
+  --search-bg: rgba(10, 35, 20, 0.3);
+}
+
+/* Light Mode */
+body.light-mode {
+  --bg-gradient-start: rgba(144, 238, 144, 0.92);
+  --bg-gradient-end: rgba(152, 251, 152, 0.92);
+  --header-bg: rgba(200, 255, 200, 0.4);
+  --card-bg: rgba(200, 255, 200, 0.5);
+  --title-color: #003300;
+  --text-primary: #003300;
+  --text-secondary: #005500;
+  --border-color: rgba(100, 200, 100, 0.5);
+  --search-bg: rgba(220, 255, 220, 0.4);
+}
+
+body.light-mode .detail-label {
+  color: #004400;
+  opacity: 1;
+}
+
+body.light-mode .detail-value {
+  color: #003300;
+}
+
+body.light-mode .strain-name {
+  color: #003300;
+}
+
+body.light-mode .strain-type {
+  color: #005500;
+}
+
+body.light-mode .strain-source {
+  color: #006600;
+  opacity: 1;
+}
+
+body.light-mode .grid-item-name {
+  color: #ffffff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+body.light-mode .badge-sativa,
+body.light-mode .badge-indica,
+body.light-mode .badge-hybrid {
+  color: #ffffff;
+  font-weight: 800;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+body.light-mode .strain-item {
+  background-color: rgba(200, 255, 200, 0.5);
+}
+
+body.light-mode .grid-item {
+  background-color: rgba(200, 255, 200, 0.5);
+}
+
+body.light-mode .grid-item-content {
+  background: rgba(100, 200, 100, 0.6);
 }
 
 body {
@@ -55,8 +126,8 @@ body {
     Ubuntu, Cantarell, sans-serif;
   background: linear-gradient(
       135deg,
-      rgba(20, 83, 45, 0.92) 0%,
-      rgba(6, 95, 70, 0.92) 100%
+      var(--bg-gradient-start) 0%,
+      var(--bg-gradient-end) 100%
     ),
     url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmSn203rmrmQhsJg2CQZqDz_hElk-kW1jDSA&s")
       center/cover;
@@ -66,12 +137,12 @@ body {
   padding-bottom: 80px; /* Space for bottom nav */
   overflow-x: hidden;
   min-height: 100vh;
+  transition: background 0.3s ease;
 }
 
 /* Header */
 .header {
-  background-color: rgba(20, 71, 40, 0.3);
-  /* background: var(--olive-gradient); */
+  background-color: var(--header-bg);
   color: var(--white);
   padding: var(--spacing-md) var(--spacing-md);
   display: flex;
@@ -80,6 +151,7 @@ body {
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
+  transition: background-color 0.3s ease;
 }
 
 .header > div {
@@ -109,13 +181,21 @@ body {
   position: relative;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   z-index: 1;
-  color: #043104;
+  color: var(--title-color);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.app-title:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
 .btn-add {
   background: none;
   border: none;
-  color: #043104;
+  color: var(--title-color);
   cursor: pointer;
   padding: var(--spacing-xs);
   display: flex;
@@ -140,19 +220,21 @@ body {
 
 /* Search Container */
 .search-container {
-  background-color: rgba(10, 35, 20, 0.3);
+  background-color: var(--search-bg);
   padding: var(--spacing-md);
   box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease;
 }
 
 .search-box {
-  background-color: rgba(10, 35, 20, 0.3);
+  background-color: var(--search-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: var(--radius-md);
   padding: var(--spacing-sm) var(--spacing-md);
   display: flex;
   align-items: center;
+  transition: background-color 0.3s ease;
   gap: var(--spacing-sm);
   box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
@@ -499,14 +581,15 @@ body {
 }
 
 .detail-card {
-  background-color: rgba(20, 60, 40, 0.5);
+  background-color: var(--card-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-xl);
   animation: slideUp 0.3s ease-out;
-  border: 1px solid rgba(60, 120, 80, 0.4);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }
 
 @keyframes slideUp {
@@ -531,9 +614,10 @@ body {
 .detail-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #a0d4a0;
+  color: var(--text-primary);
   flex: 1;
   text-align: center;
+  transition: color 0.3s ease;
 }
 
 .detail-header > div {
