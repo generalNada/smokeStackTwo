@@ -540,18 +540,23 @@ body {
   transform: none !important;
 }
 
-/* Small screens - reposition buttons */
+/* Small screens - stack buttons under title */
 @media (max-width: 480px) {
+  .detail-header {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
   .detail-title {
-    padding: 0 40px;
-    flex: none;
+    padding: 0;
+    width: 100%;
   }
 
   .detail-header > div {
-    flex-direction: column;
-    gap: 4px !important;
-    right: 0;
-    top: 0;
+    position: static;
+    display: flex;
+    gap: 8px;
   }
 
   .detail-header .btn-edit,
