@@ -543,22 +543,20 @@ body {
 /* Small screens - reposition buttons */
 @media (max-width: 480px) {
   .detail-title {
-    padding: 0 60px;
+    padding: 0 40px;
     flex: none;
   }
 
   .detail-header > div {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  .detail-header .btn-edit {
-    right: 50px;
-  }
-
-  .detail-header .btn-delete {
+    flex-direction: column;
+    gap: 4px !important;
     right: 0;
+    top: 0;
+  }
+
+  .detail-header .btn-edit,
+  .detail-header .btn-delete {
+    transform: none !important;
   }
 }
 
