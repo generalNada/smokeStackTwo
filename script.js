@@ -47,6 +47,56 @@ async function init() {
 // API Configuration
 const API_BASE = "https://franky-app-ix96j.ondigitalocean.app/api";
 
+// Cloudinary Configuration
+const CLOUDINARY_CONFIG = {
+  cloudName: "dqjhgnivi",
+  uploadPreset: "smokestack_upload", // You'll need to create this unsigned preset in Cloudinary
+};
+
+// Cloudinary Upload Widget
+function openCloudinaryWidget() {
+  if (typeof cloudinary === "undefined") {
+    alert("Cloudinary widget is loading. Please try again in a moment.");
+    return;
+  }
+
+  cloudinary.openUploadWidget(
+    {
+      cloudName: CLOUDINARY_CONFIG.cloudName,
+      uploadPreset: CLOUDINARY_CONFIG.uploadPreset,
+      sources: ["local", "url", "camera"],
+      multiple: false,
+      maxFileSize: 10000000, // 10MB
+      clientAllowedFormats: ["jpg", "jpeg", "png", "gif", "webp"],
+      cropping: true,
+      croppingAspectRatio: 1,
+      croppingShowDimensions: true,
+      folder: "smokestack",
+    },
+    (error, result) => {
+      if (error) {
+        console.error("Upload error:", error);
+        alert("Upload failed. Please try again.");
+        return;
+      }
+
+      if (result?.event === "success") {
+        const imageUrl = result.info.secure_url;
+        document.getElementById("inputImage").value = imageUrl;
+
+        // Show preview
+        const preview = document.getElementById("imagePreview");
+        preview.innerHTML = `
+          <img src="${imageUrl}" 
+               style="max-width: 100%; max-height: 150px; border-radius: 8px; object-fit: contain; background-color: rgba(20, 60, 40, 0.2);" 
+               alt="Preview" />
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">✓ Image uploaded successfully</p>
+        `;
+      }
+    }
+  );
+}
+
 // Helper to convert API _id to app id
 function normalizeStrain(strain) {
   return {
@@ -505,6 +555,12 @@ function attachEventListeners() {
 
   // Delete button
   elements.btnDelete.addEventListener("click", handleDeleteClick);
+
+  // Cloudinary upload button
+  const uploadBtn = document.getElementById("uploadWidgetBtn");
+  if (uploadBtn) {
+    uploadBtn.addEventListener("click", openCloudinaryWidget);
+  }
 
   // Back button
   elements.btnBack.addEventListener("click", goToListView);

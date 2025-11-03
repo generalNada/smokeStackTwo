@@ -976,6 +976,31 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.btn-upload {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: var(--olive-gradient);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-upload:hover {
+  background: var(--olive-gradient-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-upload:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
 /* Bottom Navigation */
 .bottom-nav {
   position: fixed;
