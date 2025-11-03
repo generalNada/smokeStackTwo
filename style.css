@@ -50,8 +50,8 @@
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
   /* Theme colors - Dark Mode (default) */
-  --bg-gradient-start: rgba(20, 83, 45, 0.92);
-  --bg-gradient-end: rgba(6, 95, 70, 0.92);
+  --bg-gradient-start: rgba(20, 83, 45, 0.75);
+  --bg-gradient-end: rgba(6, 95, 70, 0.75);
   --header-bg: rgba(20, 71, 40, 0.3);
   --card-bg: rgba(20, 60, 40, 0.4);
   --title-color: #043104;
@@ -63,8 +63,8 @@
 
 /* Light Mode */
 body.light-mode {
-  --bg-gradient-start: rgba(144, 238, 144, 0.92);
-  --bg-gradient-end: rgba(152, 251, 152, 0.92);
+  --bg-gradient-start: rgba(144, 238, 144, 0.75);
+  --bg-gradient-end: rgba(152, 251, 152, 0.75);
   --header-bg: rgba(200, 255, 200, 0.4);
   --card-bg: rgba(200, 255, 200, 0.5);
   --title-color: #003300;
@@ -130,7 +130,7 @@ body {
       var(--bg-gradient-end) 100%
     ),
     url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmSn203rmrmQhsJg2CQZqDz_hElk-kW1jDSA&s")
-      center/cover;
+      center / contain no-repeat;
   background-attachment: fixed;
   color: var(--black);
   line-height: 1.6;
