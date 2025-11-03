@@ -129,8 +129,10 @@ body {
       var(--bg-gradient-start) 0%,
       var(--bg-gradient-end) 100%
     ),
-    url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmSn203rmrmQhsJg2CQZqDz_hElk-kW1jDSA&s")
-      center / contain no-repeat;
+    /* url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmSn203rmrmQhsJg2CQZqDz_hElk-kW1jDSA&s")
+      center / contain no-repeat; */
+      url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmSn203rmrmQhsJg2CQZqDz_hElk-kW1jDSA&s")
+      center / cover;
   background-attachment: fixed;
   color: var(--black);
   line-height: 1.6;
