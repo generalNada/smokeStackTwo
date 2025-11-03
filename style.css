@@ -540,6 +540,32 @@ body {
   transform: none !important;
 }
 
+/* Small screens - reposition buttons */
+@media (max-width: 480px) {
+  .detail-header {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .detail-header > div {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .detail-header .btn-edit {
+    right: 50px;
+  }
+
+  .detail-header .btn-delete {
+    right: 0;
+  }
+
+  .detail-title {
+    padding: 0 60px;
+  }
+}
+
 .btn-edit {
   background: rgba(20, 60, 40, 0.4);
   backdrop-filter: blur(10px);
