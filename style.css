@@ -542,9 +542,9 @@ body {
 
 /* Small screens - reposition buttons */
 @media (max-width: 480px) {
-  .detail-header {
-    flex-direction: row;
-    justify-content: space-between;
+  .detail-title {
+    padding: 0 60px;
+    flex: none;
   }
 
   .detail-header > div {
@@ -559,10 +559,6 @@ body {
 
   .detail-header .btn-delete {
     right: 0;
-  }
-
-  .detail-title {
-    padding: 0 60px;
   }
 }
 
