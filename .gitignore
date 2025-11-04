@@ -15,3 +15,14 @@ npm-debug.log*
 # Temporary files
 *.tmp
 
+# Backend
+backend/node_modules/
+backend/.env
+backend/data/*.db
+backend/data/*.db-wal
+backend/data/*.db-shm
+backend/*.env
+backend/*.db
+backend/*.db-wal
+backend/*.db-shm
+

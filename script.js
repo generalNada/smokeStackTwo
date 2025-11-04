@@ -44,8 +44,16 @@ async function init() {
   initThemeToggle();
 }
 
-// API Configuration
-const API_BASE = "https://franky-app-ix96j.ondigitalocean.app/api";
+// API Configuration - Auto-detect environment
+const API_BASE =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000/api"
+    : "https://franky-app-ix96j.ondigitalocean.app/api";
+
+// Debug: Log API base URL
+console.log("🌐 API_BASE:", API_BASE);
+console.log("📍 Hostname:", window.location.hostname);
 
 // Cloudinary Configuration
 const CLOUDINARY_CONFIG = {
