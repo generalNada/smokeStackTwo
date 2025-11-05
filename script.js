@@ -22,6 +22,7 @@ const elements = {
   btnAdd: document.getElementById("btnAdd"),
   btnEdit: document.getElementById("btnEdit"),
   btnDelete: document.getElementById("btnDelete"),
+  btnExportStrain: document.getElementById("btnExportStrain"),
   btnBack: document.getElementById("btnBack"),
   btnClose: document.getElementById("btnClose"),
   btnCancel: document.getElementById("btnCancel"),
@@ -42,6 +43,14 @@ const elements = {
   accountManagement: document.getElementById("accountManagement"),
   loggedInEmail: document.getElementById("loggedInEmail"),
   btnDeleteAccount: document.getElementById("btnDeleteAccount"),
+  btnLogoutFromAccount: document.getElementById("btnLogoutFromAccount"),
+  // Data management elements
+  btnDataManagement: document.getElementById("btnDataManagement"),
+  dataManagement: document.getElementById("dataManagement"),
+  btnExportData: document.getElementById("btnExportData"),
+  btnImportData: document.getElementById("btnImportData"),
+  importFileInput: document.getElementById("importFileInput"),
+  importExportStatus: document.getElementById("importExportStatus"),
   // Detail elements
   detailTitle: document.getElementById("detailTitle"),
   detailType: document.getElementById("detailType"),
@@ -587,6 +596,14 @@ function attachEventListeners() {
   // Delete button
   elements.btnDelete.addEventListener("click", handleDeleteClick);
 
+  // Export single strain button
+  if (elements.btnExportStrain) {
+    elements.btnExportStrain.addEventListener(
+      "click",
+      handleExportSingleStrain
+    );
+  }
+
   // Cloudinary upload button
   const uploadBtn = document.getElementById("uploadWidgetBtn");
   if (uploadBtn) {
@@ -653,8 +670,8 @@ function initAuth() {
   if (elements.btnAuth) {
     elements.btnAuth.addEventListener("click", () => {
       if (appState.user) {
-        // Logout
-        handleLogout();
+        // Show account management modal (with logout and delete account options)
+        showAccountManagement();
       } else {
         // Show login modal
         showAuthModal("login");
@@ -701,6 +718,45 @@ function initAuth() {
   // Delete account button
   if (elements.btnDeleteAccount) {
     elements.btnDeleteAccount.addEventListener("click", handleDeleteAccount);
+  }
+
+  // Logout button from account management
+  if (elements.btnLogoutFromAccount) {
+    elements.btnLogoutFromAccount.addEventListener("click", () => {
+      closeAuthModal();
+      handleLogout();
+    });
+  }
+
+  // Data Management button
+  if (elements.btnDataManagement) {
+    elements.btnDataManagement.addEventListener("click", () => {
+      showDataManagement();
+    });
+  }
+
+  // Export data button
+  if (elements.btnExportData) {
+    elements.btnExportData.addEventListener("click", handleExportData);
+  }
+
+  // Import data button
+  if (elements.btnImportData) {
+    elements.btnImportData.addEventListener("click", () => {
+      if (elements.importFileInput) {
+        elements.importFileInput.click();
+      }
+    });
+  }
+
+  // File input change handler
+  if (elements.importFileInput) {
+    elements.importFileInput.addEventListener("change", handleImportData);
+  }
+
+  // Close data management on overlay click
+  if (elements.authModalOverlay) {
+    // Reuse auth modal overlay for data management
   }
 }
 
@@ -751,6 +807,37 @@ function showAccountManagement() {
   document.body.style.overflow = "hidden";
 }
 
+// Show Data Management Modal
+function showDataManagement() {
+  if (!elements.authModalOverlay || !elements.dataManagement) return;
+
+  // Hide other modals
+  if (elements.accountManagement) {
+    elements.accountManagement.classList.add("hidden");
+  }
+  if (elements.loginForm) elements.loginForm.classList.add("hidden");
+  if (elements.registerForm) elements.registerForm.classList.add("hidden");
+  if (elements.tabLogin) elements.tabLogin.classList.add("hidden");
+  if (elements.tabRegister) elements.tabRegister.classList.add("hidden");
+
+  // Show data management
+  elements.dataManagement.classList.remove("hidden");
+
+  // Update modal title
+  if (elements.authModalTitle) {
+    elements.authModalTitle.textContent = "Data Management";
+  }
+
+  // Clear status
+  if (elements.importExportStatus) {
+    elements.importExportStatus.classList.add("hidden");
+    elements.importExportStatus.textContent = "";
+  }
+
+  elements.authModalOverlay.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
 // Close Auth Modal
 function closeAuthModal() {
   if (!elements.authModalOverlay) return;
@@ -763,9 +850,23 @@ function closeAuthModal() {
   if (elements.registerForm) elements.registerForm.reset();
   hideAuthErrors();
 
-  // Hide account management
+  // Hide all modals
   if (elements.accountManagement) {
     elements.accountManagement.classList.add("hidden");
+  }
+  if (elements.dataManagement) {
+    elements.dataManagement.classList.add("hidden");
+  }
+
+  // Clear file input
+  if (elements.importFileInput) {
+    elements.importFileInput.value = "";
+  }
+
+  // Clear status
+  if (elements.importExportStatus) {
+    elements.importExportStatus.classList.add("hidden");
+    elements.importExportStatus.textContent = "";
   }
 
   // Show tabs again
@@ -1122,6 +1223,361 @@ function getAuthHeaders() {
     headers["Authorization"] = `Bearer ${appState.authToken}`;
   }
   return headers;
+}
+
+// ============================================
+// DATA IMPORT/EXPORT FUNCTIONS
+// ============================================
+
+// Export Data to JSON file (all strains or single strain with custom filename)
+function handleExportData(singleStrain = null, customFilename = null) {
+  try {
+    let strainsToExport = [];
+    let exportCount = 0;
+    let defaultFilename = "";
+
+    if (singleStrain) {
+      // Export single strain
+      strainsToExport = [singleStrain];
+      exportCount = 1;
+      defaultFilename = `smokestack-${sanitizeFilename(singleStrain.name)}-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
+    } else {
+      // Export all strains
+      if (appState.strains.length === 0) {
+        showImportExportStatus("No data to export", "error");
+        return;
+      }
+      strainsToExport = appState.strains;
+      exportCount = appState.strains.length;
+      defaultFilename = `smokestack-backup-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
+    }
+
+    // Prepare export data
+    const exportData = {
+      version: "1.0",
+      exportDate: new Date().toISOString(),
+      count: exportCount,
+      strains: strainsToExport.map((strain) => ({
+        id: strain.id || strain._id,
+        name: strain.name,
+        type: strain.type,
+        source: strain.source || "",
+        image: strain.image || "",
+        setting: strain.setting || "",
+        format: strain.format || "",
+        stoner: strain.stoner || "",
+        impressions: strain.impressions || "",
+        other: strain.other || "",
+        created_at: strain.created_at || "",
+        updated_at: strain.updated_at || "",
+      })),
+    };
+
+    // Create JSON string
+    const jsonString = JSON.stringify(exportData, null, 2);
+
+    // Get filename (prompt user if customFilename not provided)
+    let filename = customFilename;
+    if (!filename) {
+      filename = prompt(
+        `Enter filename for export:\n\n(Leave empty to use default: ${defaultFilename})`,
+        defaultFilename
+      );
+      if (filename === null) {
+        // User cancelled
+        return;
+      }
+      if (filename.trim() === "") {
+        filename = defaultFilename;
+      } else {
+        // Ensure .json extension
+        if (!filename.toLowerCase().endsWith(".json")) {
+          filename += ".json";
+        }
+      }
+    }
+
+    // Sanitize filename (before creating blob)
+    filename = sanitizeFilename(filename);
+
+    // Ensure filename is not empty
+    if (!filename || filename.length === 0) {
+      filename = defaultFilename || "export.json";
+    }
+
+    // Create blob and download
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.style.display = "none"; // Hide the link
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up after a short delay
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100);
+
+    const message = singleStrain
+      ? `✅ Exported "${singleStrain.name}" successfully!`
+      : `✅ Exported ${exportCount} strain(s) successfully!`;
+
+    if (singleStrain) {
+      // Show alert for single strain export (not in modal)
+      alert(message);
+    } else {
+      showImportExportStatus(message, "success");
+    }
+
+    console.log("✅ Data exported:", exportCount, "strain(s)");
+  } catch (error) {
+    console.error("Export error:", error);
+    const errorMessage = "❌ Export failed: " + error.message;
+    if (singleStrain) {
+      alert(errorMessage);
+    } else {
+      showImportExportStatus(errorMessage, "error");
+    }
+  }
+}
+
+// Export single strain (from detail view)
+function handleExportSingleStrain() {
+  if (!appState.currentStrain) {
+    alert("No strain selected to export");
+    return;
+  }
+  handleExportData(appState.currentStrain);
+}
+
+// Sanitize filename (remove invalid characters)
+function sanitizeFilename(filename) {
+  if (!filename || typeof filename !== "string") {
+    return "export.json";
+  }
+  // Remove invalid filename characters
+  return filename
+    .replace(/[<>:"/\\|?*]/g, "_") // Replace invalid chars with underscore
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/_{2,}/g, "_") // Replace multiple underscores with single
+    .replace(/^-+|-+$/g, "") // Remove leading/trailing hyphens
+    .substring(0, 200); // Limit length
+}
+
+// Import Data from JSON file
+async function handleImportData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    // Read file
+    const text = await file.text();
+    let importData;
+
+    // Try to parse JSON
+    try {
+      importData = JSON.parse(text);
+    } catch (e) {
+      // If it's a .js file, try to extract JSON from it
+      if (file.name.endsWith(".js")) {
+        // Try to extract array or object from JS file
+        const match = text.match(/\[[\s\S]*\]|{[\s\S]*}/);
+        if (match) {
+          importData = JSON.parse(match[0]);
+        } else {
+          throw new Error("Could not parse .js file. Please use JSON format.");
+        }
+      } else {
+        throw new Error("Invalid JSON format");
+      }
+    }
+
+    // Validate structure
+    let strains = [];
+    if (Array.isArray(importData)) {
+      // If it's an array, use it directly
+      strains = importData;
+    } else if (importData.strains && Array.isArray(importData.strains)) {
+      // If it's an export object with strains array
+      strains = importData.strains;
+    } else if (importData && typeof importData === "object") {
+      // Single strain object
+      strains = [importData];
+    } else {
+      throw new Error(
+        "Invalid data format. Expected array or object with 'strains' property."
+      );
+    }
+
+    if (strains.length === 0) {
+      throw new Error("No strains found in file");
+    }
+
+    // Validate strain structure
+    const validStrains = strains.filter((strain) => {
+      return strain && (strain.name || strain.id);
+    });
+
+    if (validStrains.length === 0) {
+      throw new Error("No valid strains found in file");
+    }
+
+    // Show import options
+    const importMode = confirm(
+      `Found ${validStrains.length} strain(s) in file.\n\n` +
+        `Click OK to REPLACE all existing data.\n` +
+        `Click Cancel to MERGE (add new, update existing).`
+    );
+
+    if (importMode) {
+      // REPLACE mode: Clear all and import
+      appState.strains = [];
+      await importStrains(validStrains, true);
+      showImportExportStatus(
+        `✅ Imported ${validStrains.length} strain(s) (replaced all data)`,
+        "success"
+      );
+    } else {
+      // MERGE mode: Add/update existing
+      await importStrains(validStrains, false);
+      showImportExportStatus(
+        `✅ Imported ${validStrains.length} strain(s) (merged with existing)`,
+        "success"
+      );
+    }
+
+    // Note: renderList() and renderGrid() are called inside importStrains()
+    // but we call them again here to ensure UI is updated
+    renderList();
+    renderGrid();
+
+    // Clear file input
+    if (elements.importFileInput) {
+      elements.importFileInput.value = "";
+    }
+  } catch (error) {
+    console.error("Import error:", error);
+    showImportExportStatus("❌ Import failed: " + error.message, "error");
+    if (elements.importFileInput) {
+      elements.importFileInput.value = "";
+    }
+  }
+}
+
+// Import strains (helper function)
+async function importStrains(strains, replaceMode) {
+  const importedStrains = [];
+
+  if (replaceMode) {
+    // Clear all existing strains
+    appState.strains = [];
+  }
+
+  for (const strain of strains) {
+    try {
+      // Normalize strain data
+      const normalizedStrain = {
+        id: strain.id || strain._id || generateId(),
+        name: strain.name || "Unnamed Strain",
+        type: strain.type || "Hybrid",
+        source: strain.source || "",
+        image: strain.image || "",
+        setting: strain.setting || "",
+        format: strain.format || "",
+        stoner: strain.stoner || "",
+        impressions: strain.impressions || "",
+        other: strain.other || "",
+        created_at: strain.created_at || new Date().toISOString(),
+        updated_at: strain.updated_at || new Date().toISOString(),
+      };
+
+      if (replaceMode) {
+        // Add new strain
+        appState.strains.push(normalizedStrain);
+        importedStrains.push(normalizedStrain);
+      } else {
+        // Merge: check if exists by id or name
+        const existingIndex = appState.strains.findIndex(
+          (s) =>
+            (s.id && s.id === normalizedStrain.id) ||
+            (s._id && s._id === normalizedStrain.id) ||
+            (s.name && s.name === normalizedStrain.name)
+        );
+
+        if (existingIndex >= 0) {
+          // Update existing
+          appState.strains[existingIndex] = normalizedStrain;
+        } else {
+          // Add new
+          appState.strains.push(normalizedStrain);
+          importedStrains.push(normalizedStrain);
+        }
+      }
+    } catch (error) {
+      console.error("Error importing strain:", error);
+    }
+  }
+
+  // Save to localStorage FIRST (critical for persistence)
+  saveToLocalStorage();
+
+  // Sync new strains to API if available (only for newly imported ones)
+  // This ensures data persists even if page is refreshed
+  if (importedStrains.length > 0) {
+    try {
+      for (const strain of importedStrains) {
+        try {
+          await addStrain(strain);
+        } catch (e) {
+          // If API fails, that's okay - localStorage already has the data
+          console.log("API sync failed for strain, using localStorage:", e);
+        }
+      }
+    } catch (error) {
+      console.log("Batch API sync failed, data saved to localStorage:", error);
+    }
+  }
+
+  // Force a re-render to ensure UI is updated
+  renderList();
+  renderGrid();
+}
+
+// Show import/export status message
+function showImportExportStatus(message, type = "info") {
+  if (!elements.importExportStatus) return;
+
+  elements.importExportStatus.textContent = message;
+  elements.importExportStatus.classList.remove(
+    "hidden",
+    "success",
+    "error",
+    "info"
+  );
+  elements.importExportStatus.classList.add(type);
+
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    if (elements.importExportStatus) {
+      elements.importExportStatus.classList.add("hidden");
+    }
+  }, 5000);
+}
+
+// Generate ID helper (if not already defined)
+function generateId() {
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15) +
+    Date.now().toString(36)
+  );
 }
 
 // Theme Toggle Function
