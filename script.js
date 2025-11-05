@@ -39,6 +39,9 @@ const elements = {
   registerError: document.getElementById("registerError"),
   authLabel: document.getElementById("authLabel"),
   authIcon: document.getElementById("authIcon"),
+  accountManagement: document.getElementById("accountManagement"),
+  loggedInEmail: document.getElementById("loggedInEmail"),
+  btnDeleteAccount: document.getElementById("btnDeleteAccount"),
   // Detail elements
   detailTitle: document.getElementById("detailTitle"),
   detailType: document.getElementById("detailType"),
@@ -694,13 +697,56 @@ function initAuth() {
   if (elements.registerForm) {
     elements.registerForm.addEventListener("submit", handleRegister);
   }
+
+  // Delete account button
+  if (elements.btnDeleteAccount) {
+    elements.btnDeleteAccount.addEventListener("click", handleDeleteAccount);
+  }
 }
 
 // Show Auth Modal
 function showAuthModal(mode = "login") {
   if (!elements.authModalOverlay) return;
 
+  // If user is logged in, show account management instead
+  if (appState.user && mode === "login") {
+    showAccountManagement();
+    return;
+  }
+
+  // Hide account management when showing login/register
+  if (elements.accountManagement) {
+    elements.accountManagement.classList.add("hidden");
+  }
+
   switchAuthTab(mode);
+  elements.authModalOverlay.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+// Show Account Management (when logged in)
+function showAccountManagement() {
+  if (!elements.authModalOverlay || !elements.accountManagement) return;
+
+  // Hide login/register forms
+  if (elements.loginForm) elements.loginForm.classList.add("hidden");
+  if (elements.registerForm) elements.registerForm.classList.add("hidden");
+  if (elements.tabLogin) elements.tabLogin.classList.add("hidden");
+  if (elements.tabRegister) elements.tabRegister.classList.add("hidden");
+
+  // Show account management
+  elements.accountManagement.classList.remove("hidden");
+
+  // Update modal title
+  if (elements.authModalTitle) {
+    elements.authModalTitle.textContent = "Account";
+  }
+
+  // Show logged in email
+  if (elements.loggedInEmail && appState.user) {
+    elements.loggedInEmail.textContent = appState.user.email || "User";
+  }
+
   elements.authModalOverlay.classList.remove("hidden");
   document.body.style.overflow = "hidden";
 }
@@ -716,11 +762,29 @@ function closeAuthModal() {
   if (elements.loginForm) elements.loginForm.reset();
   if (elements.registerForm) elements.registerForm.reset();
   hideAuthErrors();
+
+  // Hide account management
+  if (elements.accountManagement) {
+    elements.accountManagement.classList.add("hidden");
+  }
+
+  // Show tabs again
+  if (elements.tabLogin) elements.tabLogin.classList.remove("hidden");
+  if (elements.tabRegister) elements.tabRegister.classList.remove("hidden");
 }
 
 // Switch between Login/Register tabs
 function switchAuthTab(mode) {
   if (!elements.tabLogin || !elements.tabRegister) return;
+
+  // Hide account management when switching tabs
+  if (elements.accountManagement) {
+    elements.accountManagement.classList.add("hidden");
+  }
+
+  // Show tabs
+  elements.tabLogin.classList.remove("hidden");
+  elements.tabRegister.classList.remove("hidden");
 
   const isLogin = mode === "login";
 
@@ -906,6 +970,82 @@ function handleLogout() {
   }
 }
 
+// Handle Delete Account
+async function handleDeleteAccount() {
+  if (!appState.user) {
+    alert("You must be logged in to delete your account.");
+    return;
+  }
+
+  const email = appState.user.email || "your account";
+  const confirmMessage = `⚠️ WARNING: This will permanently delete your account and ALL your strains!\n\nEmail: ${email}\n\nThis action CANNOT be undone.\n\nType "DELETE" to confirm:`;
+
+  // Double confirmation
+  const userInput = prompt(confirmMessage);
+
+  if (userInput !== "DELETE") {
+    if (userInput !== null) {
+      alert(
+        "Account deletion cancelled. You must type 'DELETE' exactly to confirm."
+      );
+    }
+    return;
+  }
+
+  // Final confirmation
+  if (
+    !confirm(
+      `Are you absolutely sure you want to delete ${email}?\n\nThis will:\n- Delete your account\n- Delete all your strains\n- Cannot be undone\n\nProceed?`
+    )
+  ) {
+    return;
+  }
+
+  try {
+    console.log("🗑️ Attempting to delete account:", { email });
+
+    // TODO: Replace with actual API call when backend is ready
+    // PLACEHOLDER: Simulate API call
+    // When backend is ready, replace with:
+    /*
+    const response = await fetch(`${API_BASE}/auth/account`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Account deletion failed");
+    }
+    */
+
+    // TEMPORARY: Simulate successful account deletion (remove when backend is ready)
+    // Simulate deletion delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Clear all user data
+    clearAuth();
+
+    // Clear all strains (user's private data)
+    appState.strains = [];
+    localStorage.removeItem("smokestack_strains");
+
+    // Update UI
+    updateAuthUI(false);
+    closeAuthModal();
+    renderList();
+    renderGrid();
+
+    console.log("✅ Account deleted successfully (placeholder)");
+    alert(
+      "✅ Account deleted successfully! (This is a placeholder - backend not connected yet)"
+    );
+  } catch (error) {
+    console.error("Account deletion error:", error);
+    alert(`❌ Failed to delete account: ${error.message || "Unknown error"}`);
+  }
+}
+
 // Clear Auth
 function clearAuth() {
   appState.user = null;
@@ -927,7 +1067,7 @@ function updateAuthUI(isLoggedIn) {
 
   if (isLoggedIn && appState.user) {
     // Logged in state
-    elements.authLabel.textContent = "Logout";
+    elements.authLabel.textContent = "Account";
 
     // Change icon to logout icon
     const loginIcon = elements.authIcon.querySelector("#loginIcon");

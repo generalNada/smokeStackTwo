@@ -432,6 +432,52 @@
             <button type="submit" class="btn-save">Sign Up</button>
           </div>
         </form>
+
+        <!-- Account Management (shown when logged in) -->
+        <div id="accountManagement" class="account-management hidden">
+          <div class="account-info">
+            <h3
+              style="
+                color: var(--text-primary);
+                margin-bottom: var(--spacing-md);
+              "
+            >
+              Account Management
+            </h3>
+            <p
+              style="
+                color: var(--text-secondary);
+                font-size: 0.9rem;
+                margin-bottom: var(--spacing-lg);
+              "
+            >
+              Logged in as:
+              <strong
+                id="loggedInEmail"
+                style="color: var(--text-primary)"
+              ></strong>
+            </p>
+            <button
+              type="button"
+              class="btn-delete-account"
+              id="btnDeleteAccount"
+              style="width: 100%"
+            >
+              🗑️ Delete Account
+            </button>
+            <small
+              style="
+                color: var(--text-secondary);
+                font-size: 0.8rem;
+                margin-top: var(--spacing-sm);
+                display: block;
+                text-align: center;
+              "
+            >
+              This will permanently delete your account and all your strains
+            </small>
+          </div>
+        </div>
       </div>
     </div>
 

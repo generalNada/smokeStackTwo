@@ -1315,3 +1315,51 @@ body.light-mode .auth-error {
     display: none; /* Hide text label on small screens, show icon only */
   }
 }
+
+/* Account Management Styles */
+.account-management {
+  padding: var(--spacing-lg);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.account-info {
+  text-align: center;
+}
+
+.btn-delete-account {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-md);
+  margin-top: var(--spacing-md);
+}
+
+.btn-delete-account:hover {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.btn-delete-account:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Light mode adjustments for account management */
+body.light-mode .account-info h3 {
+  color: var(--text-primary);
+}
+
+body.light-mode .btn-delete-account {
+  box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3);
+}
+
+body.light-mode .btn-delete-account:hover {
+  box-shadow: 0 6px 10px rgba(220, 53, 69, 0.4);
+}
