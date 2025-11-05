@@ -19,26 +19,6 @@
     <header class="header">
       <h1 class="app-title">SmokeStack</h1>
       <div style="display: flex; gap: 8px">
-        <!-- Data Management Button -->
-        <button
-          class="btn-add"
-          id="btnDataManagement"
-          aria-label="Data Management"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          <span style="font-size: 12px; margin-left: 4px">Data</span>
-        </button>
         <!-- Auth Button (Login/Logout) -->
         <button class="btn-add" id="btnAuth" aria-label="Login or Logout">
           <svg
@@ -156,25 +136,6 @@
         <div class="detail-header">
           <h2 class="detail-title" id="detailTitle"></h2>
           <div style="display: flex; gap: 8px">
-            <button
-              class="btn-edit"
-              id="btnExportStrain"
-              aria-label="Export strain"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              Export
-            </button>
             <button class="btn-edit" id="btnEdit" aria-label="Edit strain">
               <svg
                 width="16"
@@ -532,75 +493,6 @@
               Delete Account will permanently remove your account and all your
               strains
             </small>
-          </div>
-        </div>
-
-        <!-- Data Import/Export Section -->
-        <div id="dataManagement" class="account-management hidden">
-          <div class="account-info">
-            <h3
-              style="
-                color: var(--text-primary);
-                margin-bottom: var(--spacing-md);
-              "
-            >
-              Data Management
-            </h3>
-            <p
-              style="
-                color: var(--text-secondary);
-                font-size: 0.9rem;
-                margin-bottom: var(--spacing-lg);
-              "
-            >
-              Export your strains as a backup or import from a previous backup
-            </p>
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                gap: var(--spacing-sm);
-              "
-            >
-              <button
-                type="button"
-                class="btn-save"
-                id="btnExportData"
-                style="width: 100%"
-              >
-                📥 Export Data (JSON)
-              </button>
-              <button
-                type="button"
-                class="btn-save"
-                id="btnImportData"
-                style="width: 100%"
-              >
-                📤 Import Data (JSON)
-              </button>
-              <input
-                type="file"
-                id="importFileInput"
-                accept=".json,.js"
-                style="display: none"
-              />
-            </div>
-            <small
-              style="
-                color: var(--text-secondary);
-                font-size: 0.8rem;
-                margin-top: var(--spacing-sm);
-                display: block;
-                text-align: center;
-              "
-            >
-              Export creates a JSON file with all your strains. Import allows
-              you to restore from a backup.
-            </small>
-            <div
-              id="importExportStatus"
-              class="import-export-status hidden"
-            ></div>
           </div>
         </div>
       </div>
