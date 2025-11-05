@@ -3,6 +3,9 @@ const appState = {
   strains: [],
   currentStrain: null,
   isEditing: false,
+  // Auth state
+  user: null,
+  authToken: null,
 };
 
 // DOM Elements
@@ -23,6 +26,19 @@ const elements = {
   btnClose: document.getElementById("btnClose"),
   btnCancel: document.getElementById("btnCancel"),
   navBtns: document.querySelectorAll(".nav-btn"),
+  // Auth elements
+  btnAuth: document.getElementById("btnAuth"),
+  authModalOverlay: document.getElementById("authModalOverlay"),
+  authModalTitle: document.getElementById("authModalTitle"),
+  btnCloseAuth: document.getElementById("btnCloseAuth"),
+  tabLogin: document.getElementById("tabLogin"),
+  tabRegister: document.getElementById("tabRegister"),
+  loginForm: document.getElementById("loginForm"),
+  registerForm: document.getElementById("registerForm"),
+  loginError: document.getElementById("loginError"),
+  registerError: document.getElementById("registerError"),
+  authLabel: document.getElementById("authLabel"),
+  authIcon: document.getElementById("authIcon"),
   // Detail elements
   detailTitle: document.getElementById("detailTitle"),
   detailType: document.getElementById("detailType"),
@@ -37,11 +53,15 @@ const elements = {
 
 // Initialize App
 async function init() {
+  // Check for existing auth session
+  checkAuthStatus();
+
   await loadStrains();
   renderList();
   renderGrid();
   attachEventListeners();
   initThemeToggle();
+  initAuth();
 }
 
 // API Configuration - Auto-detect environment
@@ -599,6 +619,369 @@ function attachEventListeners() {
       closeModal();
     }
   });
+}
+
+// ============================================
+// AUTHENTICATION FUNCTIONS
+// ============================================
+
+// Check if user is already logged in
+function checkAuthStatus() {
+  const storedToken = localStorage.getItem("smokestack_auth_token");
+  const storedUser = localStorage.getItem("smokestack_user");
+
+  if (storedToken && storedUser) {
+    try {
+      appState.authToken = storedToken;
+      appState.user = JSON.parse(storedUser);
+      updateAuthUI(true);
+    } catch (e) {
+      console.error("Error parsing stored user data:", e);
+      clearAuth();
+    }
+  } else {
+    updateAuthUI(false);
+  }
+}
+
+// Initialize Auth UI
+function initAuth() {
+  // Auth button click
+  if (elements.btnAuth) {
+    elements.btnAuth.addEventListener("click", () => {
+      if (appState.user) {
+        // Logout
+        handleLogout();
+      } else {
+        // Show login modal
+        showAuthModal("login");
+      }
+    });
+  }
+
+  // Auth modal close
+  if (elements.btnCloseAuth) {
+    elements.btnCloseAuth.addEventListener("click", closeAuthModal);
+  }
+
+  // Auth modal overlay click
+  if (elements.authModalOverlay) {
+    elements.authModalOverlay.addEventListener("click", (e) => {
+      if (e.target === elements.authModalOverlay) {
+        closeAuthModal();
+      }
+    });
+  }
+
+  // Tab switching
+  if (elements.tabLogin) {
+    elements.tabLogin.addEventListener("click", () => {
+      switchAuthTab("login");
+    });
+  }
+
+  if (elements.tabRegister) {
+    elements.tabRegister.addEventListener("click", () => {
+      switchAuthTab("register");
+    });
+  }
+
+  // Form submissions
+  if (elements.loginForm) {
+    elements.loginForm.addEventListener("submit", handleLogin);
+  }
+
+  if (elements.registerForm) {
+    elements.registerForm.addEventListener("submit", handleRegister);
+  }
+}
+
+// Show Auth Modal
+function showAuthModal(mode = "login") {
+  if (!elements.authModalOverlay) return;
+
+  switchAuthTab(mode);
+  elements.authModalOverlay.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+// Close Auth Modal
+function closeAuthModal() {
+  if (!elements.authModalOverlay) return;
+
+  elements.authModalOverlay.classList.add("hidden");
+  document.body.style.overflow = "";
+
+  // Clear forms
+  if (elements.loginForm) elements.loginForm.reset();
+  if (elements.registerForm) elements.registerForm.reset();
+  hideAuthErrors();
+}
+
+// Switch between Login/Register tabs
+function switchAuthTab(mode) {
+  if (!elements.tabLogin || !elements.tabRegister) return;
+
+  const isLogin = mode === "login";
+
+  // Update tabs
+  if (isLogin) {
+    elements.tabLogin.classList.add("active");
+    elements.tabRegister.classList.remove("active");
+    elements.loginForm.classList.remove("hidden");
+    elements.registerForm.classList.add("hidden");
+    if (elements.authModalTitle) elements.authModalTitle.textContent = "Login";
+  } else {
+    elements.tabLogin.classList.remove("active");
+    elements.tabRegister.classList.add("active");
+    elements.loginForm.classList.add("hidden");
+    elements.registerForm.classList.remove("hidden");
+    if (elements.authModalTitle)
+      elements.authModalTitle.textContent = "Sign Up";
+  }
+
+  hideAuthErrors();
+}
+
+// Handle Login
+async function handleLogin(e) {
+  e.preventDefault();
+  hideAuthErrors();
+
+  const email = document.getElementById("loginEmail").value.trim();
+  const pin = document.getElementById("loginPin").value;
+
+  if (!email || !pin) {
+    showAuthError("loginError", "Please enter email and PIN");
+    return;
+  }
+
+  // TODO: Replace with actual API call when backend is ready
+  // For now, this is a placeholder that simulates login
+  try {
+    console.log("🔐 Attempting login:", { email, pin: "***" });
+
+    // PLACEHOLDER: Simulate API call
+    // When backend is ready, replace with:
+    /*
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, pin }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Login failed");
+    }
+    
+    const data = await response.json();
+    appState.authToken = data.token;
+    appState.user = data.user;
+    */
+
+    // TEMPORARY: Simulate successful login (remove when backend is ready)
+    appState.authToken = "placeholder_token_" + Date.now();
+    appState.user = { email, _id: "user_" + Date.now() };
+
+    // Save to localStorage
+    localStorage.setItem("smokestack_auth_token", appState.authToken);
+    localStorage.setItem("smokestack_user", JSON.stringify(appState.user));
+
+    updateAuthUI(true);
+    closeAuthModal();
+
+    // Reload strains (will filter by user when backend is ready)
+    await loadStrains();
+    renderList();
+    renderGrid();
+
+    console.log("✅ Login successful (placeholder)");
+    alert(
+      "✅ Login successful! (This is a placeholder - backend not connected yet)"
+    );
+  } catch (error) {
+    console.error("Login error:", error);
+    showAuthError(
+      "loginError",
+      error.message || "Login failed. Please check your credentials."
+    );
+  }
+}
+
+// Handle Register
+async function handleRegister(e) {
+  e.preventDefault();
+  hideAuthErrors();
+
+  const email = document.getElementById("registerEmail").value.trim();
+  const pin = document.getElementById("registerPin").value;
+  const pinConfirm = document.getElementById("registerPinConfirm").value;
+
+  if (!email || !pin || !pinConfirm) {
+    showAuthError("registerError", "Please fill in all fields");
+    return;
+  }
+
+  if (pin.length < 4 || pin.length > 10) {
+    showAuthError("registerError", "PIN must be 4-10 digits");
+    return;
+  }
+
+  if (!/^\d+$/.test(pin)) {
+    showAuthError("registerError", "PIN must contain only numbers");
+    return;
+  }
+
+  if (pin !== pinConfirm) {
+    showAuthError("registerError", "PINs do not match");
+    return;
+  }
+
+  // TODO: Replace with actual API call when backend is ready
+  try {
+    console.log("📝 Attempting registration:", { email, pin: "***" });
+
+    // PLACEHOLDER: Simulate API call
+    // When backend is ready, replace with:
+    /*
+    const response = await fetch(`${API_BASE}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, pin }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Registration failed");
+    }
+    
+    const data = await response.json();
+    appState.authToken = data.token;
+    appState.user = data.user;
+    */
+
+    // TEMPORARY: Simulate successful registration (remove when backend is ready)
+    appState.authToken = "placeholder_token_" + Date.now();
+    appState.user = { email, _id: "user_" + Date.now() };
+
+    // Save to localStorage
+    localStorage.setItem("smokestack_auth_token", appState.authToken);
+    localStorage.setItem("smokestack_user", JSON.stringify(appState.user));
+
+    updateAuthUI(true);
+    closeAuthModal();
+
+    // Reload strains
+    await loadStrains();
+    renderList();
+    renderGrid();
+
+    console.log("✅ Registration successful (placeholder)");
+    alert(
+      "✅ Account created! (This is a placeholder - backend not connected yet)"
+    );
+  } catch (error) {
+    console.error("Registration error:", error);
+    showAuthError(
+      "registerError",
+      error.message || "Registration failed. Please try again."
+    );
+  }
+}
+
+// Handle Logout
+function handleLogout() {
+  if (confirm("Are you sure you want to logout?")) {
+    clearAuth();
+    updateAuthUI(false);
+
+    // Reload strains (will show all or none when backend is ready)
+    loadStrains().then(() => {
+      renderList();
+      renderGrid();
+    });
+
+    console.log("👋 Logged out");
+  }
+}
+
+// Clear Auth
+function clearAuth() {
+  appState.user = null;
+  appState.authToken = null;
+  localStorage.removeItem("smokestack_auth_token");
+  localStorage.removeItem("smokestack_user");
+}
+
+// Update Auth UI
+function updateAuthUI(isLoggedIn) {
+  // Wait for elements to be available (in case called before DOM is ready)
+  if (!elements.btnAuth || !elements.authLabel || !elements.authIcon) {
+    // Retry after a short delay if elements aren't ready yet
+    if (document.readyState === "loading") {
+      setTimeout(() => updateAuthUI(isLoggedIn), 100);
+    }
+    return;
+  }
+
+  if (isLoggedIn && appState.user) {
+    // Logged in state
+    elements.authLabel.textContent = "Logout";
+
+    // Change icon to logout icon
+    const loginIcon = elements.authIcon.querySelector("#loginIcon");
+    const loginArrow = elements.authIcon.querySelector("#loginArrow");
+    const loginLine = elements.authIcon.querySelector("#loginLine");
+
+    if (loginIcon)
+      loginIcon.setAttribute("d", "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4");
+    if (loginArrow) loginArrow.setAttribute("points", "16 17 21 12 16 7");
+    if (loginLine) loginLine.setAttribute("x2", "21");
+
+    // Update button title
+    elements.btnAuth.setAttribute("aria-label", "Logout");
+  } else {
+    // Logged out state
+    elements.authLabel.textContent = "Login";
+
+    // Change icon to login icon
+    const loginIcon = elements.authIcon.querySelector("#loginIcon");
+    const loginArrow = elements.authIcon.querySelector("#loginArrow");
+    const loginLine = elements.authIcon.querySelector("#loginLine");
+
+    if (loginIcon)
+      loginIcon.setAttribute("d", "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4");
+    if (loginArrow) loginArrow.setAttribute("points", "10 17 15 12 10 7");
+    if (loginLine) loginLine.setAttribute("x2", "3");
+
+    // Update button title
+    elements.btnAuth.setAttribute("aria-label", "Login");
+  }
+}
+
+// Show Auth Error
+function showAuthError(errorElementId, message) {
+  const errorEl = document.getElementById(errorElementId);
+  if (errorEl) {
+    errorEl.textContent = message;
+    errorEl.classList.remove("hidden");
+  }
+}
+
+// Hide Auth Errors
+function hideAuthErrors() {
+  if (elements.loginError) elements.loginError.classList.add("hidden");
+  if (elements.registerError) elements.registerError.classList.add("hidden");
+}
+
+// Get Auth Headers (for API requests)
+function getAuthHeaders() {
+  const headers = { "Content-Type": "application/json" };
+  if (appState.authToken) {
+    headers["Authorization"] = `Bearer ${appState.authToken}`;
+  }
+  return headers;
 }
 
 // Theme Toggle Function
