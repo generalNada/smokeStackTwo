@@ -1261,20 +1261,22 @@ function handleExportData(singleStrain = null, customFilename = null) {
       version: "1.0",
       exportDate: new Date().toISOString(),
       count: exportCount,
-      strains: strainsToExport.map((strain) => ({
-        id: strain.id || strain._id,
-        name: strain.name,
-        type: strain.type,
-        source: strain.source || "",
-        image: strain.image || "",
-        setting: strain.setting || "",
-        format: strain.format || "",
-        stoner: strain.stoner || "",
-        impressions: strain.impressions || "",
-        other: strain.other || "",
-        created_at: strain.created_at || "",
-        updated_at: strain.updated_at || "",
-      })),
+      strains: strainsToExport
+        .filter((strain) => strain && (strain.name || strain.id)) // Only export valid strains
+        .map((strain) => ({
+          id: strain.id || strain._id || generateId(),
+          name: strain.name || "Unnamed Strain",
+          type: strain.type || "Hybrid",
+          source: strain.source || "",
+          image: strain.image || "",
+          setting: strain.setting || "",
+          format: strain.format || "",
+          stoner: strain.stoner || "",
+          impressions: strain.impressions || "",
+          other: strain.other || "",
+          created_at: strain.created_at || new Date().toISOString(),
+          updated_at: strain.updated_at || new Date().toISOString(),
+        })),
     };
 
     // Create JSON string
